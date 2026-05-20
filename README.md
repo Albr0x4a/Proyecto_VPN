@@ -28,3 +28,4 @@ Solo necesitas asegurarte de que tu sistema tenga soporte para el kernel y las h
 1. [Fase 01: Configuración de Red](/fases/01-preparacion.md): Preparación del stack de red y reenvío de paquetes.
 2. [Fase 02: Implementación del Túnel VPN con WireGuard](/fases/02-vpn-wireguard.md): Creación del túnel cifrado y la gestión segura de identidades criptográficas.
 3. [Fase 03: Resolución DNS Recursiva y Privacidad con Unbound](/fases/03-dns-unbound.md): Despliegue de un resolver propio para evitar fugas de información y asegurar la autenticidad de las respuestas.
+4. [Fase 04: Blindaje Perimetral y Defensa Activa con nftables](/fases/04-firewall.md): Implementación de una política de seguridad de "confianza cero" y protección proactiva contra ataques de red.
