@@ -2,6 +2,15 @@
 
 Este repositorio contiene la documentación técnica y los archivos de configuración para el despliegue de una infraestructura de red privada segura.
 
+**Tabla de Contenido**
+----
+----
+- [Estructura del Repositorio](#estructura-del-repositorio)
+- [Tecnologias Implementadas](#tecnologias-implementadas)
+- [Compatibilidad](#compatibilidad)
+- [Fases de Construcción](#fases-de-construcción)
+
+------
 ## Estructura del Repositorio
 
 La organización del código sigue un modelo modular para facilitar la auditoría y el despliegue por componentes:

@@ -1,3 +1,10 @@
+**Tabla de Contenido:**
+-----
+-----
+- [Habilitar IPv4 Forwarding](#habilitar-ipv4-forwarding)
+
+-----
+
 # Habilitar IPv4 Forwarding
 
 - Primero listamos nuestra configuración con respecto al reenvio de puertos:

@@ -1,3 +1,17 @@
+**Tabla de Contenido**
+-----
+-----
+- [Generar Claves](#generar-claves)
+- [Servidor](#servidor)
+  - [Archivo de Configuración](#archivo-de-configuración)
+  - [Levantar la Interfaz](#levantar-la-interfaz)
+    - [wg-quick](#wg-quick)
+    - [systemd](#systemd)
+- [Cliente](#cliente)
+- [Comprobar Funcionamiento](#comprobar-funcionamiento)
+
+------
+
 # Generar Claves
 
 - Podemos generar un par de claves de la siguiente manera:
