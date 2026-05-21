@@ -1,17 +1,18 @@
-# Proyecto_VPN
+Proyecto VPN
+======
 
 Este repositorio contiene la documentación técnica y los archivos de configuración para el despliegue de una infraestructura de red privada segura.
 
-**Tabla de Contenido**
-----
-----
+Tabla de Contenido
+===========
+
 - [Estructura del Repositorio](#estructura-del-repositorio)
 - [Tecnologias Implementadas](#tecnologias-implementadas)
 - [Compatibilidad](#compatibilidad)
 - [Fases de Construcción](#fases-de-construcción)
 
-------
-## Estructura del Repositorio
+Estructura del Repositorio
+=====
 
 La organización del código sigue un modelo modular para facilitar la auditoría y el despliegue por componentes:
 
@@ -19,7 +20,9 @@ La organización del código sigue un modelo modular para facilitar la auditorí
 - `/configs`: Directorio de archivos de configuración para los servicios implementados
 - `/systemd`: Unidades de servicio y temporizadores para la automatización de tareas.
 
-## Tecnologias Implementadas
+
+Tecnologias Implementadas
+=====
 
 El proyecto integra las siguientes tecnologías de red:
 
@@ -27,12 +30,14 @@ El proyecto integra las siguientes tecnologías de red:
 - [Unbound](https://unbound.docs.nlnetlabs.nl)
 - [Nftables](https://wiki.nftables.org/wiki-nftables/index.php/Main_Page)
 
-## Compatibilidad
+Compatibilidad+
+======
 
 Aunque este proyecto nació y se probó a fondo en Arch Linux, no estás limitado a esta distribución. La arquitectura y la lógica de red que he implementado son totalmente flexibles: puedes llevar estas configuraciones a Ubuntu, Debian, Red Hat o cualquier otro sistema Linux moderno sin complicaciones.
 Solo necesitas asegurarte de que tu sistema tenga soporte para el kernel y las herramientas estándar de WireGuard, Unbound y nftables. Los archivos de configuración son fácilmente adaptables, por lo que puedes usarlos como base independientemente de la distribución que prefieras.
 
-## Fases de Construcción
+Fases de Construcción
+=======
 
 1. [Fase 01: Configuración de Red](/fases/01-preparacion.md): Preparación del stack de red y reenvío de paquetes.
 2. [Fase 02: Implementación del Túnel VPN con WireGuard](/fases/02-vpn-wireguard.md): Creación del túnel cifrado y la gestión segura de identidades criptográficas.

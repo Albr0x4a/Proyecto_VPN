@@ -1,6 +1,6 @@
-**Tabla de Contenido**
------
------
+Tabla de Contenido
+===========
+
 - [Generar Claves](#generar-claves)
 - [Servidor](#servidor)
   - [Archivo de Configuración](#archivo-de-configuración)
@@ -10,9 +10,9 @@
 - [Cliente](#cliente)
 - [Comprobar Funcionamiento](#comprobar-funcionamiento)
 
-------
 
-# Generar Claves
+Generar Claves
+=====
 
 - Podemos generar un par de claves de la siguiente manera:
     
@@ -41,7 +41,8 @@
     ```
     
 
-# Servidor
+Servidor
+======
 
 ## Archivo de Configuración
 

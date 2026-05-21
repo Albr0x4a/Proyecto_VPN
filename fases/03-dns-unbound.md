@@ -1,6 +1,6 @@
-**Tabla de Contenido**
---------
---------
+Tabla de Contenido
+===========
+
 - [DNS](#dns)
   - [DNS Público](#dns-público)
   - [Servidor DNS](#servidor-dns)
@@ -10,9 +10,9 @@
     - [Root Hints](#root-hints)
     - [Otras Configuraciones](#otras-configuraciones)
 
--------
 
-# DNS
+DNS
+=======
 
 ## DNS Público
 

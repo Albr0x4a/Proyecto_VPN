@@ -1,6 +1,6 @@
-**Tabla de Contenido**
------
------
+Tabla de Contenido
+===========
+
 - [Firewall](#firewall)
   - [Configuración Básica](#configuración-básica)
   - [Protegiendo Nuestro Servidor](#protegiendo-nuestro-servidor)
@@ -9,9 +9,9 @@
   - [Controlando el Tráfico Saliente](#controlando-el-tráfico-saliente)
   - [ICMP](#icmp)
 
-------
 
-# Firewall
+ Firewall
+=====
 
 ## Configuración Básica
 
