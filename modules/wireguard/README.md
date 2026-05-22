@@ -10,6 +10,7 @@ Tabla de Contenido
     - [systemd](#systemd)
 - [Cliente](#cliente)
 - [Comprobar Funcionamiento](#comprobar-funcionamiento)
+- [Problemas Detectados](#problemas-detectados)
 
 Habilitar IPv4 Forwarding
 =======
@@ -462,3 +463,63 @@ Servidor
             
             - Se muestra la IP del Servidor VPN lo que nos confirma que se está utilizando NAT.
                 - Para este ejemplo tuve que cambiar la interfaz de las reglas de firewall a `ens37`
+
+# Problemas Detectados
+
+- Al intentar instalar un paquete grande, como por ejemplo `rust-1.88-all`, la instalación se congela y perdemos acceso ssh al servidor VPN.
+
+```
+albr@Ubuntu-Server:~$ sudo apt install rust-1.88-all
+Installing:
+  rust-1.88-all
+
+Installing dependencies:
+  cargo-1.88   libncurses-dev    libstd-rust-1.88-dev  llvm-20-dev           llvm-20-tools     rustc-1.88
+  libffi-dev   libpfm4           libxml2-dev           llvm-20-linker-tools  rust-1.88-clippy  rustfmt-1.88
+  liblzma-dev  libstd-rust-1.88  llvm-20               llvm-20-runtime       rust-1.88-gdb
+
+Suggested packages:
+  cargo-1.88-doc  ncurses-doc  llvm-20-doc    rust-1.88-src  lld-20
+  liblzma-doc     pkgconf      rust-1.88-doc  gdb-doc        clang-20
+
+Summary:
+  Upgrading: 0, Installing: 18, Removing: 0, Not Upgrading: 0
+  Download size: 139 MB / 161 MB
+  Space needed: 839 MB / 4,108 MB available
+
+Continue? [Y/n] y
+Get:1 http://es.archive.ubuntu.com/ubuntu questing-updates/universe amd64 libstd-rust-1.88-dev amd64 1.88.0+dfsg0ubuntu1-0ubuntu2 [44.5 MB]
+26% [1 libstd-rust-1.88-dev 27.4 MB/44.5 MB 62%]
+```
+
+- Esto es debido a problemas con MTU, wireguard por defecto lo tiene en un valor de `1420`:
+
+```
+[albr@albr-arch ~]$ ip link show wg0
+8: wg0: <POINTOPOINT,NOARP,UP,LOWER_UP> mtu 1420 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/none
+```
+
+- Esto podemos solucionarlo disminuyendo este valor en el archivo `wg0.conf`, añadiendo lo siguiente `mtu = 1380`:  
+
+```
+[albr@albr-arch ~]$ sudo cat /etc/wireguard/wg0.conf
+[Interface]
+Address = 10.10.10.1/32
+ListenPort = 51820
+PrivateKey = <Server PivateKey>
+mtu = 1380
+
+[Peer]
+# Client 1
+PublicKey = <Client PublicKey>
+AllowedIPs = 10.10.10.2/32
+
+
+[albr@albr-arch ~]$ sudo systemctl restart wg-quick@wg0
+[albr@albr-arch ~]$ ip link show wg0
+9: wg0: <POINTOPOINT,NOARP,UP,LOWER_UP> mtu 1380 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/none
+```
+
+- De esta forma se soluciona el problema.
