@@ -16,7 +16,7 @@ Tabla de Contenido
 ## Configuración Básica
 
 - Para proteger nuestro servidor vamos a configurar nuestro firewall utilzando `nftables`, para esto empezamos configurando las mismas reglas que hasta ahora teniamos con `iptables` pero con la sintaxis de `nftables` en el archivo `/etc/nftables.conf`:
-  - [nftables.conf](/configs/04-firewall/nftables.conf)
+  - [nftables.conf](./configs/nftables.conf)
     
     ```bash
     iptables -A FORWARD -i %i -j ACCEPT; iptables -A FORWARD -o %i -j ACCEPT; iptables -t nat -A POSTROUTING -o ens33 -j MASQUERADE

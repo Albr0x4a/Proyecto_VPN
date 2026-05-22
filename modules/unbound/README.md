@@ -228,7 +228,7 @@ nameserver 127.0.0.1
         ```
         
     - Ya que no necesitamos toda esta configuración, e iremos agregando poco a poco lo que necesitemos, vamos a sustituir todo el contenido de este archivo con la siguiente configuración, siguiendo la recomendación de la documentación oficial: [https://unbound.docs.nlnetlabs.nl/en/latest/use-cases/home-resolver.html#setting-up-for-the-rest-of-the-network](https://unbound.docs.nlnetlabs.nl/en/latest/use-cases/home-resolver.html#setting-up-for-the-rest-of-the-network)
-      - [unbound.conf](/configs/03-dns-unbound/unbound.conf)
+      - [unbound.conf](./configs/unbound.conf)
         
         ```bash
         server:
@@ -447,7 +447,7 @@ nameserver 127.0.0.1
     
 - Para asegurarnos que nuestras `root hints` se encuentren actualizadas debemos actualizar este archivo cada cierto tiempo, esto lo podemos automatizar mediante un `timer` de `systemd` , como se muestra en: [https://wiki.archlinux.org/title/Unbound#Roothints_systemd_timer](https://wiki.archlinux.org/title/Unbound#Roothints_systemd_timer)
     - Primero creamos el servicio `roothints.service` en el directorio `/etc/systemd/system/` con el siguiente contenido:
-        - [roothints.service](/systemd/roothints.service)
+        - [roothints.service](./systemd/roothints.service)
         ```bash
         [root@albr-arch system]# realpath roothints.service
         /etc/systemd/system/roothints.service
@@ -461,7 +461,7 @@ nameserver 127.0.0.1
         ```
         
     - Luego en la misma ubicación creamos el `timer`, con el siguiente contenido:
-        - [roothints.timer](/systemd/roothints.timer)
+        - [roothints.timer](./systemd/roothints.timer)
         ```bash
         [root@albr-arch system]# realpath roothints.timer
         /etc/systemd/system/roothints.timer

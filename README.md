@@ -1,7 +1,8 @@
 Proyecto VPN
 ======
 
-Este repositorio contiene la documentación técnica y los archivos de configuración para el despliegue de una infraestructura de red privada segura.
+Este proyecto comenzó como una VPN basada en WireGuard para uso personal, pero evolucionó hacia un laboratorio práctico de redes, sistemas Linux y observabilidad de tráfico.
+La idea principal no es únicamente desplegar servicios, sino utilizarlos como entorno para estudiar y experimentar.
 
 Tabla de Contenido
 ===========
@@ -9,17 +10,15 @@ Tabla de Contenido
 - [Estructura del Repositorio](#estructura-del-repositorio)
 - [Tecnologias Implementadas](#tecnologias-implementadas)
 - [Compatibilidad](#compatibilidad)
-- [Fases de Construcción](#fases-de-construcción)
+- [Módulos](#módulos)
 
 Estructura del Repositorio
 =====
 
-La organización del código sigue un modelo modular para facilitar la auditoría y el despliegue por componentes:
+La organización del proyecto sigue un modelo modular para facilitar la separación entre configuración, análisis y documentación técnica.
 
-- `/fases`: Contiene la documentación técnica detallada de cada etapa del proyecto, incluyendo metodologías de configuración, registros de logs y pruebas de validación.
-- `/configs`: Directorio de archivos de configuración para los servicios implementados
-- `/systemd`: Unidades de servicio y temporizadores para la automatización de tareas.
-
+- `/modules`: Contiene la configuración y documentación específica de cada componente del laboratorio, incluyendo archivos de configuración, despliegue y pruebas relacionadas.
+- `/docs`: Directorio destinado a notas, pruebas, observaciones e investigaciones que van surgiendo durante el desarrollo del laboratorio y el estudio de distintos protocolos y comportamientos de red.
 
 Tecnologias Implementadas
 =====
@@ -30,16 +29,14 @@ El proyecto integra las siguientes tecnologías de red:
 - [Unbound](https://unbound.docs.nlnetlabs.nl)
 - [Nftables](https://wiki.nftables.org/wiki-nftables/index.php/Main_Page)
 
-Compatibilidad+
+Compatibilidad
 ======
 
-Aunque este proyecto nació y se probó a fondo en Arch Linux, no estás limitado a esta distribución. La arquitectura y la lógica de red que he implementado son totalmente flexibles: puedes llevar estas configuraciones a Ubuntu, Debian, Red Hat o cualquier otro sistema Linux moderno sin complicaciones.
-Solo necesitas asegurarte de que tu sistema tenga soporte para el kernel y las herramientas estándar de WireGuard, Unbound y nftables. Los archivos de configuración son fácilmente adaptables, por lo que puedes usarlos como base independientemente de la distribución que prefieras.
+El laboratorio fue desarrollado y probado principalmente sobre Arch Linux, aunque la mayoría de configuraciones y conceptos utilizados pueden adaptarse fácilmente a otras distribuciones Linux modernas.
 
-Fases de Construcción
+Módulos
 =======
 
-1. [Fase 01: Configuración de Red](/fases/01-preparacion.md): Preparación del stack de red y reenvío de paquetes.
-2. [Fase 02: Implementación del Túnel VPN con WireGuard](/fases/02-vpn-wireguard.md): Creación del túnel cifrado y la gestión segura de identidades criptográficas.
-3. [Fase 03: Resolución DNS Recursiva y Privacidad con Unbound](/fases/03-dns-unbound.md): Despliegue de un resolver propio para evitar fugas de información y asegurar la autenticidad de las respuestas.
-4. [Fase 04: Blindaje Perimetral y Defensa Activa con nftables](/fases/04-firewall.md): Implementación de una política de seguridad de "confianza cero" y protección proactiva contra ataques de red.
+1. [Wireguard](/modules/wireguard/README.md)
+2. [Unbound](/modules/unbound/README.md)
+3. [Nftables](/modules/nftables/README.md)
