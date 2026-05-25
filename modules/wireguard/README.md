@@ -12,10 +12,10 @@ Tabla de Contenido
 - [Comprobar Funcionamiento](#comprobar-funcionamiento)
 - [Problemas Detectados](#problemas-detectados)
 
-Habilitar IPv4 Forwarding
-=======
+# Habilitar IPv4 Forwarding
 
-- Primero listamos nuestra configuración con respecto al reenvio de puertos:
+
+- Primero listamos nuestra configuración con respecto al reenvio de tráfico:
     
     ```bash
     [albr@albr-arch ~]$ sudo sysctl -a | grep "forward"
@@ -119,8 +119,8 @@ Habilitar IPv4 Forwarding
         
         - Ahora se encuentra activado.
 
-Generar Claves
-=====
+# Generar Claves
+
 
 - Podemos generar un par de claves de la siguiente manera:
     
@@ -149,8 +149,7 @@ Generar Claves
     ```
     
 
-Servidor
-======
+# Servidor
 
 ## Archivo de Configuración
 

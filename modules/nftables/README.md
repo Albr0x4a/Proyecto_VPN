@@ -1,5 +1,5 @@
-Tabla de Contenido
-===========
+# Tabla de Contenido
+
 
 - [Firewall](#firewall)
   - [Configuración Básica](#configuración-básica)
@@ -10,12 +10,12 @@ Tabla de Contenido
   - [ICMP](#icmp)
 
 
- Firewall
-=====
+# Firewall
+
 
 ## Configuración Básica
 
-- Para proteger nuestro servidor vamos a configurar nuestro firewall utilzando `nftables`, para esto empezamos configurando las mismas reglas que hasta ahora teniamos con `iptables` pero con la sintaxis de `nftables` en el archivo `/etc/nftables.conf`:
+- Para proteger nuestro servidor vamos a configurar nuestro firewall utilizando `nftables`, para esto empezamos configurando las mismas reglas que hasta ahora teniamos con `iptables` pero con la sintaxis de `nftables` en el archivo `/etc/nftables.conf`:
   - [nftables.conf](./configs/nftables.conf)
     
     ```bash
@@ -320,7 +320,7 @@ Tabla de Contenido
          ------------------------CUT----------------------
         ```
         
-        - Con `typeof` especificamos que vamos a estar utilzando la ip de origen de los paquetes
+        - Con `typeof` especificamos que vamos a estar utilizando la ip de origen de los paquetes
         - Con la flag `timeout` habilitamos que las entradas tengan un timeout.
     - Ahora que tenemos nuestros sets, podemos empezar a elaborar la lógica en nuestra cadena `ssh_guard`:
         - Primero al llegar un paquete a la chain `ssh_guard` se va a añadir al set `ssh_set1` por 10 segundos y se va a aceptar:
@@ -713,3 +713,9 @@ Tabla de Contenido
         
 
 ## ICMP
+
+Parte de la configuración implementada en este módulo surge del análisis práctico de distintos protocolos de red y de posibles escenarios de abuso.
+
+Para comprender el razonamiento detrás de ciertas reglas, mitigaciones y decisiones de hardening, se recomienda revisar la documentación técnica y laboratorios asociados:
+
+- [`ICMP`](../../docs/icmp/README.md) — Análisis del protocolo, recreación de abusos y diseño de mitigaciones mediante `nftables`.

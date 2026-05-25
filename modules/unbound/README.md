@@ -1,5 +1,4 @@
-Tabla de Contenido
-===========
+# Tabla de Contenido
 
 - [DNS](#dns)
   - [DNS Público](#dns-público)
@@ -11,8 +10,7 @@ Tabla de Contenido
     - [Otras Configuraciones](#otras-configuraciones)
 
 
-DNS
-=======
+# DNS
 
 ## DNS Público
 
