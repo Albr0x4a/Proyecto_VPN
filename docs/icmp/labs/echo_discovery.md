@@ -6,6 +6,19 @@ Sin embargo, en escenarios donde la VPN se utiliza como red interna compartida (
 
 ----
 
+## Tabla de Contenido
+
+- [Escenario](#escenario)
+- [Pruebas](#pruebas)
+- [Mitigación Simple](#mitigación-simple)
+- [Limitaciones de la Mitigación](#limitaciones-de-la-mitigación)
+    - [Evasión Mediante Reducción de Velocidad](#evasión-mediante-reducción-de-velocidad)
+    - [Limitación del Rate Limiting Global](#limitación-del-rate-limiting-global)
+
+----
+
+## Escenario
+
 Para analizar este caso vamos a utilizar el siguiente escenario:
 
 ![](../imgs/echo_discovery/vpn_network.png)
@@ -80,8 +93,8 @@ chain forward {
 }
 
 chain wg0-ens37 {
-    counter icmp type echo-request accept
-    counter icmp type echo-reply accept
+    icmp type echo-request counter accept
+    icmp type echo-reply counter accept
     accept
 }
 ```
@@ -102,17 +115,18 @@ chain forward {
 }
 
 chain wg0-ens37 {
-    counter icmp type echo-request accept
-    counter icmp type echo-reply accept
+    icmp type echo-request counter accept
+    icmp type echo-reply counter accept
     accept
 }   
 
 chain ens37-wg0 {
-    counter icmp type echo-request accept
-    counter icmp type echo-reply accept
+    icmp type echo-request counter accept
+    icmp type echo-reply counter accept
     accept
 }
 ```
+## Pruebas
 
 - Ahora que lo tenemos todo preparado podemos lanzar el barrido ping desde nuestro cliente ubuntu a la red interna:
 
@@ -135,30 +149,30 @@ sys     0m0.124s
 
 ```
 chain wg0-ens37 {
-    counter packets 994 bytes 83496 icmp type echo-request accept
-    counter packets 0 bytes 0 icmp type echo-reply accept
-    accept
-}
-
-chain ens37-wg0 {
-    counter packets 6 bytes 504 icmp type echo-request accept
-    counter packets 6 bytes 504 icmp type echo-reply accept
-    accept
-}      
-```
-
-- Se localizaron 6 hosts activos y estos respondieron con `echo-reply`, lo raro es que también nos reporta 6 paquetes icmp de tipo `echo-request`, para analizar esto podemos modificar las reglas para que también filtren por ip de origen y asi evitar errores:
-
-```
-chain wg0-ens37 {
-    counter ip saddr 10.10.10.0/24 icmp type echo-reply accept
-    counter ip saddr 10.10.10.0/24 icmp type echo-request accept
+    icmp type echo-request counter packets 994 bytes 83496 accept
+    icmp type echo-reply counter packets 0 bytes 0 accept
     counter accept
 }
 
 chain ens37-wg0 {
-    counter ip saddr 192.168.1.0/24 icmp type echo-reply accept
-    counter ip saddr 192.168.1.0/24 icmp type echo-request accept
+    icmp type echo-request counter packets 6 bytes 504 accept
+    icmp type echo-reply counter packets 6 bytes 504 accept
+    counter accept
+}      
+```
+
+- Se localizaron 6 hosts activos y estos respondieron con `echo-reply`, lo raro es que también nos reporta 6 paquetes icmp de tipo `echo-request`, para analizar esto podemos modificar las reglas para que también filtren por ip de origen y así evitar errores:
+
+```
+chain wg0-ens37 {
+    ip saddr 10.10.10.0/24 icmp type echo-reply counter accept
+    ip saddr 10.10.10.0/24 icmp type echo-request counter accept
+    counter accept
+}
+
+chain ens37-wg0 {
+    ip saddr 192.168.1.0/24 icmp type echo-reply counter accept
+    ip saddr 192.168.1.0/24 icmp type echo-request counter accept
     counter accept
 }
 ```
@@ -173,22 +187,23 @@ albr@Ubuntu-Server:~$ time fping -ag 192.168.1.0/24 2>/dev/null
 192.168.1.43
 192.168.1.66
 192.168.1.89
+192.168.1.98
 
-real    0m9.939s
-user    0m0.018s
-sys     0m0.128s
+real    0m9.910s
+user    0m0.009s
+sys     0m0.141s
 ```
 
 ```
 chain wg0-ens37 {
-    counter packets 995 bytes 83580 ip saddr 10.10.10.0/24 icmp type echo-reply accept
-    counter packets 995 bytes 83580 ip saddr 10.10.10.0/24 icmp type echo-request accept
+    ip saddr 10.10.10.0/24 icmp type echo-request counter packets 991 bytes 83244 accept
+    ip saddr 10.10.10.0/24 icmp type echo-reply counter packets 0 bytes 0 accept
     counter packets 0 bytes 0 accept
 }
 
 chain ens37-wg0 {
-    counter packets 7 bytes 588 ip saddr 192.168.1.0/24 icmp type echo-reply accept
-    counter packets 0 bytes 0 ip saddr 192.168.1.0/24 icmp type echo-request accept
+    ip saddr 192.168.1.0/24 icmp type echo-reply counter packets 7 bytes 588 accept
+    ip saddr 192.168.1.0/24 icmp type echo-request counter packets 0 bytes 0 accept
     counter packets 0 bytes 0 accept
 }
 ```
@@ -198,20 +213,22 @@ chain ens37-wg0 {
 Al analizar los datos observamos que se enviaron cerca de 1000 paquetes en aproximadamente 10 segundos, que equivale a unos 100 paquetes ICMP `echo-request` por segundo. Aunque este volumen de tráfico no necesariamente implica que sea actividad maliciosa, representa una frecuencia significativamente superior al comportamiento habitual de un cliente VPN en uso normal. 
 Este patrón puede aparecer en tareas legítimas como monitorización, troubleshooting o descubrimiento de red realizado por administradores, pero también en técnicas de enumeración y reconocimiento de hosts internos.
 
-- Para intentar mitigar este comportamiento puede utilizarse [rate limiting](https://wiki.nftables.org/wiki-nftables/index.php/Rate_limiting_matchings) en nftables con el objetivo de reducir barridos masivos de descubrimiento sin bloquear completamente el tráfico ICMP legítimo.
+## Mitigación Simple
+
+- Para intentar mitigar este comportamiento como se indica en [Recommendations for filtering ICMP messages](https://datatracker.ietf.org/doc/html/draft-ietf-opsec-icmp-filtering-04#section-2.2.1) puede utilizarse [rate limiting](https://wiki.nftables.org/wiki-nftables/index.php/Rate_limiting_matchings) en nftables con el objetivo de reducir barridos masivos de descubrimiento sin bloquear completamente el tráfico ICMP legítimo.
 
 - Podemos añadir la siguiente regla a nuestra chain:
-`icmp type echo-request limit rate over 5/second drop`
+`icmp type echo-request limit rate over 5/second burst 5 packets drop`
 
-    - Esta regla descartará todos los paquetes `echo-request` que superen el límite configurado, degradando el volumen de descubrimiento permitido.
+    - Esta regla descarta paquetes `echo-request` que superen el límite configurado, permitiendo pequeñas ráfagas temporales (`burst`) antes de aplicar el bloqueo.
 
 - Para probar la efectividad de esto podemos añadirlo a nuestra chain de igual forma que anteriormente:
 
 ```
 chain wg0-ens37 {
-    counter ip saddr 10.10.10.0/24 icmp type echo-request limit rate over 5/second drop
-    counter ip saddr 10.10.10.0/24 icmp type echo-request accept
-    counter ip saddr 10.10.10.0/24 icmp type echo-reply accept
+    ip saddr 10.10.10.0/24 icmp type echo-request limit rate over 5/second burst 5 packets counter drop
+    ip saddr 10.10.10.0/24 icmp type echo-request counter accept
+    ip saddr 10.10.10.0/24 icmp type echo-reply counter accept
     counter accept
 }
 ```
@@ -223,23 +240,86 @@ chain wg0-ens37 {
 albr@Ubuntu-Server:~$ time fping -ag 192.168.1.0/24 2>/dev/null
 192.168.1.1
 
-real    0m9.869s
-user    0m0.027s
-sys     0m0.113s
+real    0m9.857s
+user    0m0.016s
+sys     0m0.124s
 ```
 
 ```
 chain wg0-ens37 {
-    counter packets 1009 bytes 84756 ip saddr 10.10.10.0/24 icmp type echo-request limit rate over 5/second burst 5 packets drop
-    
-    counter packets 45 bytes 3780 ip saddr 10.10.10.0/24 icmp type echo-request accept
-    
-    counter packets 0 bytes 0 ip saddr 10.10.10.0/24 icmp type echo-reply accept
+    ip saddr 10.10.10.0/24 icmp type echo-request limit rate over 5/second burst 5 packets counter packets 964 bytes 80976 drop
+    ip saddr 10.10.10.0/24 icmp type echo-request counter packets 45 bytes 3780 accept
+
+    ip saddr 10.10.10.0/24 icmp type echo-reply counter packets 0 bytes 0 accept
     counter packets 0 bytes 0 accept
 }
 ```
 
-- Como podemos ver identificamos solamente un host activo y los counters nos indican que se descartaron 1009 paquetes y solo se aceptaron 45
+- Como podemos ver identificamos solamente un host activo y los counters nos indican que se descartaron 964 paquetes y solo se aceptaron 45
 
------
-Este umbral resulta extremadamente restrictivo y degrada significativamente la capacidad de descubrimiento, llegando incluso a impedir el funcionamiento normal de herramientas de diagnóstico. En entornos reales, el valor debe ajustarse según el contexto operativo y el volumen esperado de tráfico ICMP.
+
+> Nota: Este umbral resulta extremadamente restrictivo y degrada significativamente la capacidad de descubrimiento, llegando incluso a impedir el funcionamiento normal de herramientas de diagnóstico. En entornos reales, el valor debe ajustarse según el contexto operativo y el volumen esperado de tráfico ICMP.
+
+## Limitaciones de la Mitigación
+
+### Evasión Mediante Reducción de Velocidad
+
+- Aunque esta configuración es efectiva contra escaneos masivos, un atacante podría seguir realizando barridos de ping pero limitando la cantidad de paquetes enviados como se muestra a continuación:
+
+```
+albr@Ubuntu-Server:~$ time fping -i 200 -r 0 -ag 192.168.1.0/24 2>/dev/null
+192.168.1.1
+192.168.1.13
+192.168.1.21
+192.168.1.43
+192.168.1.66
+192.168.1.68
+192.168.1.89
+192.168.1.98
+
+real    0m51.263s
+user    0m0.010s
+sys     0m0.074s
+```
+
+-  Con el parámetro `-i` indicamos el intervalo de paquetes en milisegundos, en este caso 200 ms que es alrededor de 5 paquetes por segundo y con `-r 0` indicamos que no reintente con ningún host.
+
+```
+chain wg0-ens37 {
+    ip saddr 10.10.10.0/24 icmp type echo-request limit rate over 5/second burst 5 packets counter packets 0 bytes 0 drop
+    ip saddr 10.10.10.0/24 icmp type echo-request counter packets 253 bytes 21252 accept
+    ip saddr 10.10.10.0/24 icmp type echo-reply counter packets 0 bytes 0 accept
+    counter packets 0 bytes 0 accept
+}
+
+chain ens37-wg0 {
+    ip saddr 192.168.1.0/24 icmp type echo-reply counter packets 8 bytes 672 accept
+    ip saddr 192.168.1.0/24 icmp type echo-request counter packets 0 bytes 0 accept
+    counter packets 0 bytes 0 accept
+}
+```
+
+- Como podemos ver no se descartó ningún paquete y se aceptaron `253` por lo que pudimos adaptarnos a la mitigación y de igual forma ejecutar con éxito el barrido de ping.
+
+- También observamos que el escaneo pasó de ejecutarse en casi 10 segundos a 51 segundos, aunque no es mucho tiempo, en rangos de red más amplios esto podría aumentar significativamente, por ejemplo imaginemos el siguiente rango `192.168.0.0/16`, para realizar un barrido de ping completo a esta red tendríamos que enviar `65.534` paquetes `echo-request`, enviando 5 paquetes por segundo tardaríamos alrededor de 3 horas y media realizar el escaneo completo.
+
+### Limitación del Rate Limiting Global
+
+- Actualmente todos los clientes de la red interna estan limitados a 5 paquetes por segundo:
+
+```mermaid
+graph LR
+
+    C1["Client1<br/>10.10.10.2"]
+    C2["Client2<br/>10.10.10.3"]
+    C3["Client3<br/>10.10.10.4"]
+    C4["ClientX<br/>10.10.10.x"]
+
+    FW["nftables<br/>Global limit<br/>5/s"]
+
+    C1 --> FW
+    C2 --> FW
+    C3 --> FW
+    C4 --> FW
+```
+

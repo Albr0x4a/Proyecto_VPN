@@ -6,6 +6,12 @@ Desde una perspectiva de ciberseguridad, ICMP también puede utilizarse para tar
 
 El objetivo de esta sección es analizar ICMP desde un enfoque práctico orientado a **pentesting, hardening y defensa**, recreando técnicas ofensivas, observando el comportamiento real del protocolo y diseñando configuraciones de `nftables` para mitigar abuso sin romper funcionalidades legítimas de red.
 
+## Tabla de Contenido
+
+- [Objetivos](#objetivos)
+- [Documentación recomendada](#documentación-recomendada)
+- [Laboratorios](#laboratorios)
+
 ## Objetivos
 
 - Comprender el funcionamiento interno de ICMP.
@@ -17,11 +23,13 @@ El objetivo de esta sección es analizar ICMP desde un enfoque práctico orienta
 
 ## Documentación recomendada
 
-- [RFC 792](https://datatracker.ietf.org/doc/html/rfc792) — Especificación del protocolo ICMP.
-- [RFC 1191](https://datatracker.ietf.org/doc/html/rfc1191) — Funcionamiento de Path MTU Discovery (PMTU).
-- [RFC 1812 - Section 4.3](https://datatracker.ietf.org/doc/html/rfc1812#section-4.3) — Comportamiento esperado de routers IPv4 respecto al procesamiento de ICMP.
-- [IANA ICMP Parameters](https://www.iana.org/assignments/icmp-parameters/icmp-parameters.xhtml#icmp-parameters-types) — Tipos y códigos ICMP.
+- [RFC 792](https://datatracker.ietf.org/doc/html/rfc792): Especificación del protocolo ICMP.
+- [Recommendations for filtering ICMP messages - draft-ietf-opsec-icmp-filtering-04](https://datatracker.ietf.org/doc/html/draft-ietf-opsec-icmp-filtering-04): Qué ICMP filtrar, limitar y por qué bloquearlo mal rompe redes.
+- [RFC 1191](https://datatracker.ietf.org/doc/html/rfc1191): Funcionamiento de Path MTU Discovery (PMTU).
+- [RFC 1812 - Section 4.3](https://datatracker.ietf.org/doc/html/rfc1812#section-4.3): Comportamiento esperado de routers IPv4 respecto al procesamiento de ICMP.
+- [IANA ICMP Parameters](https://www.iana.org/assignments/icmp-parameters/icmp-parameters.xhtml#icmp-parameters-types): Tipos y códigos ICMP.
+- [ICMP Usage in Scanning - Ofir Arkin](https://www.cs.dartmouth.edu/~sergey/netreads/ICMP_Scanning_v3.0.pdf): Paper ofensivo sobre abuso de ICMP.
 
-## Labs
+## Laboratorios
 
-- [Echo Discovery (Ping Sweep)](./labs/echo_discovery.md): Enumeración de hosts mediante `echo-request`, observación del tráfico ICMP y mitigación mediante `rate limiting` en `nftables`. |
+- [Echo Discovery (Ping Sweep)](./labs/echo_discovery.md): Enumeración de hosts mediante `echo-request`, análisis del tráfico ICMP y mitigación con `nftables`.
