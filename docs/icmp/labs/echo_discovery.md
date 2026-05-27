@@ -14,6 +14,7 @@ Sin embargo, en escenarios donde la VPN se utiliza como red interna compartida (
 - [Limitaciones de la Mitigación](#limitaciones-de-la-mitigación)
     - [Evasión Mediante Reducción de Velocidad](#evasión-mediante-reducción-de-velocidad)
     - [Limitación del Rate Limiting Global](#limitación-del-rate-limiting-global)
+- [Conclusiones](#conclusiones)
 
 ----
 
